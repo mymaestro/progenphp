@@ -6,7 +6,7 @@
  */
 
 // Include utility functions
-include_once __DIR__ . '/../private/utils/functions.php';
+include_once __DIR__ . '/../../private/utils/functions.php';
 
 // Start session for CSRF testing
 session_start();
@@ -49,8 +49,8 @@ $tests['htaccess_files'] = [
 ];
 
 $htaccessFiles = [
-    __DIR__ . '/../.htaccess' => 'Root .htaccess',
-    __DIR__ . '/../private/.htaccess' => 'Private folder .htaccess',
+    __DIR__ . '/../../.htaccess' => 'Root .htaccess',
+    __DIR__ . '/../../private/.htaccess' => 'Private folder .htaccess',
 ];
 
 $htaccessStatus = [];
@@ -76,7 +76,7 @@ $tests['config_access'] = [
 ];
 
 try {
-    $config = include __DIR__ . '/../private/config/app.php';
+    $config = include __DIR__ . '/../../private/config/app.php';
     if (is_array($config) && isset($config['app']['name'])) {
         $tests['config_access']['status'] = true;
         $tests['config_access']['message'] = 'Configuration files are accessible to PHP includes';

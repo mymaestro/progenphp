@@ -16,7 +16,7 @@ return [
     ],
 
     // Timezone Configuration
-    'timezone' => 'UTC', // Change to your local timezone
+    'timezone' => 'America/Chicago', // Change to your local timezone
 
     // Database Configuration (example)
     'database' => [
