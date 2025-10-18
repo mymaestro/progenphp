@@ -1,0 +1,27 @@
+# Deny all access to the private folder
+# This prevents direct web access to any files in the private directory
+Order Deny,Allow
+Deny from all
+
+# Alternative method for Apache 2.4+
+# Require all denied
+
+# Block access to specific file types that might contain sensitive information
+<FilesMatch "\.(php|inc|conf|config|ini|log|sql|bak|old|backup)$">
+    Deny from all
+</FilesMatch>
+
+# Prevent directory browsing
+Options -Indexes
+
+# Hide .htaccess itself from being viewed
+<Files .htaccess>
+    Order allow,deny
+    Deny from all
+</Files>
+
+# Add additional security headers (if supported)
+<IfModule mod_headers.c>
+    Header always set X-Content-Type-Options nosniff
+    Header always set X-Frame-Options DENY
+</IfModule>
