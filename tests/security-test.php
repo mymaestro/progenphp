@@ -23,7 +23,9 @@ $tests['private_folder_protection'] = [
 ];
 
 // Attempt to access private folder (this should fail)
-$privateUrl = '//' . $_SERVER['HTTP_HOST'] . dirname($_SERVER['REQUEST_URI']) . '/../private/config/app.php';
+$host = $_SERVER['HTTP_HOST'] ?? 'localhost:8002';
+$requestUri = $_SERVER['REQUEST_URI'] ?? '/tests/security-test.php';
+$privateUrl = '//' . $host . dirname($requestUri) . '/../private/config/app.php';
 $context = stream_context_create([
     'http' => [
         'timeout' => 5,
