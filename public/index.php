@@ -252,12 +252,11 @@ ob_start();
                         <?php
                         // Check for system utilities (exec functions disabled on this host)
                         $utilities = [
-                            'curl_php' => ['name' => 'cURL (PHP Extension)', 'description' => 'HTTP client via PHP'],
-                            'imagick' => ['name' => 'ImageMagick (PHP Extension)', 'description' => 'Image processing via PHP'],
-                            'gd' => ['name' => 'GD Library', 'description' => 'Basic image processing'],
-                        ];
-                        
-                        // Add system utilities (will show as unavailable due to exec restrictions)
+                            'curl_php' => ['name' => 'cURL (PHP Extension)', 'description' => 'HTTP requests via PHP'],
+                            'imagick' => ['name' => 'Imagick (PHP Extension)', 'description' => 'Advanced image/PDF processing via PHP'],
+                            'gd' => ['name' => 'GD (PHP Extension)', 'description' => 'Basic image processing via PHP'],
+                            'pdf' => ['name' => 'PDF Extensions', 'description' => 'PDF generation and processing'],
+                        ];                        // Add system utilities (will show as unavailable due to exec restrictions)
                         $system_utilities = [
                             'gs' => ['name' => 'GhostScript (gs)', 'description' => 'PDF processing (exec disabled)'],
                             'convert' => ['name' => 'ImageMagick (convert)', 'description' => 'Image processing (exec disabled)'],
@@ -291,6 +290,51 @@ ob_start();
                                 if ($available) {
                                     $gd_info = gd_info();
                                     $version = $gd_info['GD Version'];
+                                }
+                            } elseif ($ext === 'pdf') {
+                                // Check for various PDF processing capabilities
+                                $pdf_extensions = [];
+                                
+                                // Check for PDFlib
+                                if (extension_loaded('pdf')) {
+                                    $pdf_extensions[] = 'PDFlib';
+                                }
+                                
+                                // Check for TCPDF (common PDF library)
+                                if (class_exists('TCPDF')) {
+                                    $pdf_extensions[] = 'TCPDF';
+                                }
+                                
+                                // Check for FPDF
+                                if (class_exists('FPDF')) {
+                                    $pdf_extensions[] = 'FPDF';
+                                }
+                                
+                                // Check for DomPDF
+                                if (class_exists('Dompdf\\Dompdf')) {
+                                    $pdf_extensions[] = 'DomPDF';
+                                }
+                                
+                                // Check for mPDF
+                                if (class_exists('Mpdf\\Mpdf')) {
+                                    $pdf_extensions[] = 'mPDF';
+                                }
+                                
+                                // Check if Imagick supports PDF
+                                if (extension_loaded('imagick') && class_exists('Imagick')) {
+                                    try {
+                                        $imagick = new ReflectionClass('Imagick');
+                                        if (method_exists('Imagick', 'readImage')) {
+                                            $pdf_extensions[] = 'Imagick (PDF support)';
+                                        }
+                                    } catch (Exception $e) {
+                                        // Ignore reflection errors
+                                    }
+                                }
+                                
+                                $available = !empty($pdf_extensions);
+                                if ($available) {
+                                    $version = implode(', ', $pdf_extensions);
                                 }
                             }
                             
