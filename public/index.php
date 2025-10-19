@@ -105,6 +105,10 @@ ob_start();
             <h1>ProgenPHP</h1>
             <p>Hosting Environment Information</p>
             <p>Generated on: <?php echo date('Y-m-d H:i:s T'); ?></p>
+            <div style="margin-top: 20px;">
+                <a href="phpinfo.php" style="background: #e74c3c; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; margin-right: 10px;">📋 Complete phpinfo()</a>
+                <a href="tests/access-test.php" style="background: #27ae60; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">🧪 Run Tests</a>
+            </div>
         </div>
         
         <div class="content">
