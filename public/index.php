@@ -250,16 +250,68 @@ ob_start();
                             </td>
                         </tr>
                         <?php
-                        // Check for system utilities
+                        // Check for system utilities (exec functions disabled on this host)
                         $utilities = [
-                            'gs' => ['name' => 'GhostScript (gs)', 'description' => 'PDF processing'],
-                            'convert' => ['name' => 'ImageMagick (convert)', 'description' => 'Image processing'],
-                            'ffmpeg' => ['name' => 'FFmpeg', 'description' => 'Video/audio processing'],
-                            'git' => ['name' => 'Git', 'description' => 'Version control'],
-                            'curl' => ['name' => 'cURL', 'description' => 'HTTP client'],
+                            'curl_php' => ['name' => 'cURL (PHP Extension)', 'description' => 'HTTP client via PHP'],
+                            'imagick' => ['name' => 'ImageMagick (PHP Extension)', 'description' => 'Image processing via PHP'],
+                            'gd' => ['name' => 'GD Library', 'description' => 'Basic image processing'],
                         ];
                         
-                        foreach ($utilities as $cmd => $info) {
+                        // Add system utilities (will show as unavailable due to exec restrictions)
+                        $system_utilities = [
+                            'gs' => ['name' => 'GhostScript (gs)', 'description' => 'PDF processing (exec disabled)'],
+                            'convert' => ['name' => 'ImageMagick (convert)', 'description' => 'Image processing (exec disabled)'],
+                            'ffmpeg' => ['name' => 'FFmpeg', 'description' => 'Video/audio processing (exec disabled)'],
+                            'git' => ['name' => 'Git', 'description' => 'Version control (exec disabled)'],
+                        ];
+                        
+                        // First check PHP extensions (these work without exec)
+                        foreach ($utilities as $ext => $info) {
+                            $available = false;
+                            $version = '';
+                            
+                            if ($ext === 'curl_php') {
+                                $available = extension_loaded('curl');
+                                if ($available) {
+                                    $curl_info = curl_version();
+                                    $version = 'cURL ' . $curl_info['version'];
+                                }
+                            } elseif ($ext === 'imagick') {
+                                $available = extension_loaded('imagick') && class_exists('Imagick');
+                                if ($available) {
+                                    try {
+                                        $reflection = new ReflectionClass('Imagick');
+                                        $version = 'Available (ImageMagick PHP extension)';
+                                    } catch (Exception $e) {
+                                        $version = 'Available';
+                                    }
+                                }
+                            } elseif ($ext === 'gd') {
+                                $available = extension_loaded('gd');
+                                if ($available) {
+                                    $gd_info = gd_info();
+                                    $version = $gd_info['GD Version'];
+                                }
+                            }
+                            
+                            echo '<tr>';
+                            echo '<th>' . $info['name'] . '</th>';
+                            echo '<td class="' . ($available ? 'status-ok' : 'status-error') . '">';
+                            if ($available) {
+                                echo '✓ Available';
+                                if ($version) {
+                                    echo '<br><small>' . htmlspecialchars($version) . '</small>';
+                                }
+                            } else {
+                                echo '✗ Not available';
+                            }
+                            echo '<br><small>' . $info['description'] . '</small>';
+                            echo '</td>';
+                            echo '</tr>';
+                        }
+                        
+                        // Then show system utilities (will be unavailable due to exec restrictions)
+                        foreach ($system_utilities as $cmd => $info) {
                             // Check if utility is available
                             $available = false;
                             $version = '';
@@ -269,7 +321,7 @@ ob_start();
                             if (!function_exists('exec')) {
                                 $debugInfo[] = 'exec() function not available';
                             } elseif (in_array('exec', explode(',', ini_get('disable_functions')))) {
-                                $debugInfo[] = 'exec() function disabled';
+                                $debugInfo[] = 'exec() function disabled by hosting provider';
                             } else {
                                 $output = [];
                                 $return_var = null;
