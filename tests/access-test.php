@@ -11,7 +11,7 @@ $accessTests = [];
 
 // Test 1: Include private configuration
 try {
-    $config = include __DIR__ . '/../../private/config/app.php';
+    $config = include __DIR__ . '/../private/config/app.php';
     $accessTests[] = [
         'test' => 'Include Private Config',
         'status' => is_array($config) && !empty($config),
@@ -27,7 +27,7 @@ try {
 
 // Test 2: Include utility functions
 try {
-    include_once __DIR__ . '/../../private/utils/functions.php';
+    include_once __DIR__ . '/../private/utils/functions.php';
     $tokenGenerated = function_exists('generateToken') ? generateToken(8) : false;
     $accessTests[] = [
         'test' => 'Include Utility Functions',
@@ -44,12 +44,12 @@ try {
 
 // Test 3: Check directory permissions
 $directories = [
-    'Public Directory' => __DIR__ . '/../',
-    'Private Directory' => __DIR__ . '/../../private/',
-    'Config Directory' => __DIR__ . '/../../private/config/',
-    'Utils Directory' => __DIR__ . '/../../private/utils/',
-    'Logs Directory' => __DIR__ . '/../../private/logs/',
-    'Cache Directory' => __DIR__ . '/../../private/cache/',
+    'Public Directory' => __DIR__ . '/../public/',
+    'Private Directory' => __DIR__ . '/../private/',
+    'Config Directory' => __DIR__ . '/../private/config/',
+    'Utils Directory' => __DIR__ . '/../private/utils/',
+    'Logs Directory' => __DIR__ . '/../private/logs/',
+    'Cache Directory' => __DIR__ . '/../private/cache/',
 ];
 
 foreach ($directories as $name => $path) {
@@ -63,7 +63,7 @@ foreach ($directories as $name => $path) {
 }
 
 // Test 4: File write permissions (cache directory)
-$cacheTestFile = __DIR__ . '/../../private/cache/test_' . time() . '.tmp';
+$cacheTestFile = __DIR__ . '/../private/cache/test_' . time() . '.tmp';
 try {
     $writeSuccess = file_put_contents($cacheTestFile, 'test content') !== false;
     if ($writeSuccess) {
@@ -83,7 +83,7 @@ try {
 }
 
 // Test 5: Log directory write permission
-$logTestFile = __DIR__ . '/../../private/logs/test_' . time() . '.tmp';
+$logTestFile = __DIR__ . '/../private/logs/test_' . time() . '.tmp';
 try {
     $writeSuccess = file_put_contents($logTestFile, 'test log entry') !== false;
     if ($writeSuccess) {
