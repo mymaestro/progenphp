@@ -8,6 +8,11 @@
  * Access: /phpinfo.php
  */
 
+// Prevent caching
+header("Cache-Control: no-cache, no-store, must-revalidate");
+header("Pragma: no-cache");
+header("Expires: 0");
+
 // Security check - only allow access from localhost or specific IPs if needed
 // Uncomment the following lines if you want to restrict access:
 /*

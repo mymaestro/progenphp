@@ -6,6 +6,11 @@
  * entry point for the application.
  */
 
+// Prevent caching
+header("Cache-Control: no-cache, no-store, must-revalidate");
+header("Pragma: no-cache");
+header("Expires: 0");
+
 // Include configuration if available
 $configPath = dirname(__DIR__) . '/private/config/app.php';
 $config = file_exists($configPath) ? include $configPath : [];
@@ -106,8 +111,9 @@ ob_start();
             <p>Hosting Environment Information</p>
             <p>Generated on: <?php echo date('Y-m-d H:i:s T'); ?></p>
             <div style="margin-top: 20px;">
-                <a href="phpinfo.php" style="background: #e74c3c; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; margin-right: 10px;">📋 Complete phpinfo()</a>
-                <a href="tests/access-test.php" style="background: #27ae60; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">🧪 Run Tests</a>
+                <a href="phpinfo.php?v=<?php echo time(); ?>" style="background: #e74c3c; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; margin-right: 10px;">📋 Complete phpinfo()</a>
+                <a href="tests/access-test.php?v=<?php echo time(); ?>" style="background: #27ae60; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; margin-right: 10px;">🧪 Run Tests</a>
+                <a href="index.php?v=<?php echo time(); ?>" style="background: #3498db; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">🔄 Refresh</a>
             </div>
         </div>
         
