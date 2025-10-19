@@ -30,7 +30,8 @@ function sanitize($data) {
  * @return string Random token
  */
 function generateToken($length = 32) {
-    return bin2hex(random_bytes($length / 2));
+    // Generate random bytes (half the desired length since bin2hex doubles it)
+    return bin2hex(random_bytes(intval($length / 2)));
 }
 
 /**

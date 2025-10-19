@@ -1,0 +1,12 @@
+# Deny all access to private directory
+Order Deny,Allow
+Deny from all
+
+# Block all file types
+<Files "*">
+    Order Deny,Allow
+    Deny from all
+</Files>
+
+# Additional security
+Options -Indexes -Includes -ExecCGI

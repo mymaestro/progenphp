@@ -25,7 +25,8 @@ $tests['private_folder_protection'] = [
 // Attempt to access private folder (this should fail)
 $host = $_SERVER['HTTP_HOST'] ?? 'localhost:8002';
 $requestUri = $_SERVER['REQUEST_URI'] ?? '/tests/security-test.php';
-$privateUrl = '//' . $host . dirname($requestUri) . '/../private/config/app.php';
+// Since tests are now in public/tests/, we need to go up two levels to reach private
+$privateUrl = '//' . $host . '/private/config/app.php';
 $context = stream_context_create([
     'http' => [
         'timeout' => 5,
@@ -60,7 +61,7 @@ foreach ($htaccessFiles as $file => $name) {
     $htaccessStatus[$name] = file_exists($file);
 }
 
-if (all_true($htaccessStatus)) {
+if (array_filter($htaccessStatus) === $htaccessStatus) {
     $tests['htaccess_files']['status'] = true;
     $tests['htaccess_files']['message'] = 'All required .htaccess files are present';
 } else {
@@ -100,15 +101,20 @@ $tests['utility_functions'] = [
 ];
 
 try {
-    $token = generateToken(16);
+    $token = generateToken(16);  // Should return 16-character hex string
     $email = validateEmail('test@example.com');
     $ip = getClientIP();
     
-    if (strlen($token) === 32 && $email === true && !empty($ip)) {
+    if (strlen($token) === 16 && $email === true && !empty($ip)) {
         $tests['utility_functions']['status'] = true;
         $tests['utility_functions']['message'] = 'Utility functions are working correctly';
     } else {
-        $tests['utility_functions']['message'] = 'Some utility functions are not working correctly';
+        $failedTests = [];
+        if (strlen($token) !== 16) $failedTests[] = "generateToken() returned " . strlen($token) . " chars, expected 16";
+        if ($email !== true) $failedTests[] = "validateEmail() failed";
+        if (empty($ip)) $failedTests[] = "getClientIP() returned empty";
+        
+        $tests['utility_functions']['message'] = 'Failed tests: ' . implode(', ', $failedTests);
         $overallStatus = false;
     }
 } catch (Exception $e) {
