@@ -102,6 +102,37 @@ try {
     ];
 }
 
+// Test 6: GhostScript availability
+try {
+    $gsAvailable = false;
+    $gsVersion = '';
+    
+    if (function_exists('exec') && !in_array('exec', explode(',', ini_get('disable_functions')))) {
+        $output = [];
+        $return_var = null;
+        @exec('gs --version 2>&1', $output, $return_var);
+        
+        if ($return_var === 0 && !empty($output)) {
+            $gsAvailable = true;
+            $gsVersion = isset($output[0]) ? $output[0] : 'Available';
+        }
+    }
+    
+    $accessTests[] = [
+        'test' => 'GhostScript (gs) Utility',
+        'status' => $gsAvailable,
+        'message' => $gsAvailable ? 
+            'GhostScript is available: ' . htmlspecialchars($gsVersion) : 
+            'GhostScript (gs) is not available or exec() is disabled',
+    ];
+} catch (Exception $e) {
+    $accessTests[] = [
+        'test' => 'GhostScript (gs) Utility',
+        'status' => false,
+        'message' => 'Exception: ' . $e->getMessage(),
+    ];
+}
+
 $passedTests = count(array_filter($accessTests, function($test) { return $test['status']; }));
 $totalTests = count($accessTests);
 $allPassed = $passedTests === $totalTests;

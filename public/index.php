@@ -225,6 +225,65 @@ ob_start();
                         ?>
                     </table>
                 </div>
+
+                <!-- System Utilities -->
+                <div class="info-card">
+                    <h3>System Utilities</h3>
+                    <table class="info-table">
+                        <?php
+                        // Check for system utilities
+                        $utilities = [
+                            'gs' => ['name' => 'GhostScript (gs)', 'description' => 'PDF processing'],
+                            'convert' => ['name' => 'ImageMagick (convert)', 'description' => 'Image processing'],
+                            'ffmpeg' => ['name' => 'FFmpeg', 'description' => 'Video/audio processing'],
+                            'git' => ['name' => 'Git', 'description' => 'Version control'],
+                            'curl' => ['name' => 'cURL', 'description' => 'HTTP client'],
+                        ];
+                        
+                        foreach ($utilities as $cmd => $info) {
+                            // Check if utility is available
+                            $available = false;
+                            $version = '';
+                            
+                            if (function_exists('exec') && !in_array('exec', explode(',', ini_get('disable_functions')))) {
+                                $output = [];
+                                $return_var = null;
+                                
+                                // Try different version commands
+                                if ($cmd === 'gs') {
+                                    @exec('gs --version 2>&1', $output, $return_var);
+                                } elseif ($cmd === 'convert') {
+                                    @exec('convert -version 2>&1', $output, $return_var);
+                                } elseif ($cmd === 'ffmpeg') {
+                                    @exec('ffmpeg -version 2>&1', $output, $return_var);
+                                } else {
+                                    @exec($cmd . ' --version 2>&1', $output, $return_var);
+                                }
+                                
+                                if ($return_var === 0 && !empty($output)) {
+                                    $available = true;
+                                    $version = isset($output[0]) ? substr($output[0], 0, 50) : 'Available';
+                                }
+                            }
+                            
+                            echo '<tr>';
+                            echo '<th>' . $info['name'] . '</th>';
+                            echo '<td class="' . ($available ? 'status-ok' : 'status-error') . '">';
+                            if ($available) {
+                                echo '✓ Available';
+                                if ($version && $version !== 'Available') {
+                                    echo '<br><small>' . htmlspecialchars($version) . '</small>';
+                                }
+                            } else {
+                                echo '✗ Not available';
+                            }
+                            echo '<br><small>' . $info['description'] . '</small>';
+                            echo '</td>';
+                            echo '</tr>';
+                        }
+                        ?>
+                    </table>
+                </div>
             </div>
 
             <!-- Security Information -->

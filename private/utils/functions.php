@@ -227,3 +227,59 @@ function checkRateLimit($identifier, $limit = 60, $window = 60) {
     file_put_contents($cacheFile, json_encode($data), LOCK_EX);
     return true;
 }
+
+/**
+ * Check if a system utility is available
+ * 
+ * @param string $utility The utility command to check
+ * @param string $versionFlag The flag to get version info (default: --version)
+ * @return array Array with 'available' (bool), 'version' (string), 'error' (string)
+ */
+function checkSystemUtility($utility, $versionFlag = '--version') {
+    $result = [
+        'available' => false,
+        'version' => '',
+        'error' => ''
+    ];
+    
+    // Check if exec function is available
+    if (!function_exists('exec')) {
+        $result['error'] = 'exec() function not available';
+        return $result;
+    }
+    
+    // Check if exec is disabled
+    $disabledFunctions = explode(',', ini_get('disable_functions'));
+    if (in_array('exec', $disabledFunctions)) {
+        $result['error'] = 'exec() function is disabled';
+        return $result;
+    }
+    
+    try {
+        $output = [];
+        $return_var = null;
+        $command = escapeshellcmd($utility) . ' ' . escapeshellarg($versionFlag) . ' 2>&1';
+        
+        @exec($command, $output, $return_var);
+        
+        if ($return_var === 0 && !empty($output)) {
+            $result['available'] = true;
+            $result['version'] = isset($output[0]) ? trim($output[0]) : 'Available';
+        } else {
+            $result['error'] = 'Command failed or not found';
+        }
+    } catch (Exception $e) {
+        $result['error'] = 'Exception: ' . $e->getMessage();
+    }
+    
+    return $result;
+}
+
+/**
+ * Check GhostScript availability and get version
+ * 
+ * @return array Array with availability info
+ */
+function checkGhostScript() {
+    return checkSystemUtility('gs', '--version');
+}
