@@ -230,6 +230,25 @@ ob_start();
                 <div class="info-card">
                     <h3>System Utilities</h3>
                     <table class="info-table">
+                        <tr>
+                            <th>exec() Function</th>
+                            <td class="<?php echo function_exists('exec') ? 'status-ok' : 'status-error'; ?>">
+                                <?php echo function_exists('exec') ? '✓ Available' : '✗ Not available'; ?>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>Disabled Functions</th>
+                            <td class="<?php echo strpos(ini_get('disable_functions'), 'exec') !== false ? 'status-error' : 'status-ok'; ?>">
+                                <?php 
+                                $disabled = ini_get('disable_functions');
+                                if (empty($disabled)) {
+                                    echo '✓ None disabled';
+                                } else {
+                                    echo '⚠ Disabled: ' . htmlspecialchars($disabled);
+                                }
+                                ?>
+                            </td>
+                        </tr>
                         <?php
                         // Check for system utilities
                         $utilities = [
@@ -244,25 +263,74 @@ ob_start();
                             // Check if utility is available
                             $available = false;
                             $version = '';
+                            $debugInfo = [];
                             
-                            if (function_exists('exec') && !in_array('exec', explode(',', ini_get('disable_functions')))) {
+                            // Check if exec function is available
+                            if (!function_exists('exec')) {
+                                $debugInfo[] = 'exec() function not available';
+                            } elseif (in_array('exec', explode(',', ini_get('disable_functions')))) {
+                                $debugInfo[] = 'exec() function disabled';
+                            } else {
                                 $output = [];
                                 $return_var = null;
                                 
-                                // Try different version commands
+                                // Try different version commands with full paths
+                                $commands = [];
                                 if ($cmd === 'gs') {
-                                    @exec('gs --version 2>&1', $output, $return_var);
+                                    $commands = [
+                                        'gs --version',
+                                        '/usr/bin/gs --version',
+                                        '/usr/local/bin/gs --version',
+                                        'which gs'
+                                    ];
                                 } elseif ($cmd === 'convert') {
-                                    @exec('convert -version 2>&1', $output, $return_var);
-                                } elseif ($cmd === 'ffmpeg') {
-                                    @exec('ffmpeg -version 2>&1', $output, $return_var);
+                                    $commands = [
+                                        'convert -version',
+                                        '/usr/bin/convert -version',
+                                        '/usr/local/bin/convert -version'
+                                    ];
+                                } elseif ($cmd === 'curl') {
+                                    $commands = [
+                                        'curl --version',
+                                        '/usr/bin/curl --version',
+                                        '/usr/local/bin/curl --version'
+                                    ];
                                 } else {
-                                    @exec($cmd . ' --version 2>&1', $output, $return_var);
+                                    $commands = [
+                                        $cmd . ' --version',
+                                        '/usr/bin/' . $cmd . ' --version',
+                                        '/usr/local/bin/' . $cmd . ' --version'
+                                    ];
                                 }
                                 
-                                if ($return_var === 0 && !empty($output)) {
-                                    $available = true;
-                                    $version = isset($output[0]) ? substr($output[0], 0, 50) : 'Available';
+                                foreach ($commands as $command) {
+                                    $output = [];
+                                    $return_var = null;
+                                    @exec($command . ' 2>&1', $output, $return_var);
+                                    
+                                    if ($return_var === 0 && !empty($output)) {
+                                        $available = true;
+                                        $version = isset($output[0]) ? substr($output[0], 0, 80) : 'Available';
+                                        break;
+                                    }
+                                }
+                                
+                                if (!$available) {
+                                    // Try to get PATH information
+                                    $path_output = [];
+                                    @exec('echo $PATH 2>&1', $path_output, $path_return);
+                                    if (!empty($path_output)) {
+                                        $debugInfo[] = 'PATH: ' . substr($path_output[0], 0, 100);
+                                    }
+                                    
+                                    // Try 'which' command
+                                    $which_output = [];
+                                    @exec('which ' . $cmd . ' 2>&1', $which_output, $which_return);
+                                    if ($which_return === 0 && !empty($which_output)) {
+                                        $debugInfo[] = 'Found at: ' . $which_output[0];
+                                    } else {
+                                        $debugInfo[] = 'Not found in PATH';
+                                    }
                                 }
                             }
                             
@@ -276,6 +344,9 @@ ob_start();
                                 }
                             } else {
                                 echo '✗ Not available';
+                                if (!empty($debugInfo)) {
+                                    echo '<br><small>Debug: ' . htmlspecialchars(implode('; ', $debugInfo)) . '</small>';
+                                }
                             }
                             echo '<br><small>' . $info['description'] . '</small>';
                             echo '</td>';
