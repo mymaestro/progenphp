@@ -1,0 +1,14 @@
+# Allow access to test files
+Order Allow,Deny
+Allow from all
+
+# Set proper MIME type for PHP files
+<Files "*.php">
+    SetHandler application/x-httpd-php
+</Files>
+
+# Optional: Restrict access to specific IPs (uncomment and modify for production)
+# <RequireAll>
+#     Require ip YOUR.IP.ADDRESS.HERE
+#     Require ip 127.0.0.1
+# </RequireAll>
