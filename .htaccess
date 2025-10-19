@@ -1,15 +1,7 @@
-# ProgenPHP Main .htaccess Configuration
+# ProgenPHP Root Deployment Configuration
 
 # Enable rewrite engine
 RewriteEngine On
-
-# Redirect all requests to public folder (if not already there)
-# This ensures that the public folder serves as the web root
-RewriteCond %{REQUEST_URI} !^/public/
-RewriteCond %{REQUEST_URI} !^/tests/
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^(.*)$ public/$1 [L]
 
 # Security: Block access to sensitive files and directories
 <FilesMatch "(^#.*#|\.(bak|config|dist|fla|inc|ini|log|psd|sh|sql|sw[op])|~)$">
