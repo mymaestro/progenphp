@@ -158,99 +158,106 @@ function all_true($array) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ProgenPHP - Security Tests</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@1.0.2/css/bulma.min.css">
     <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            line-height: 1.6;
+        .hero,
+        .box,
+        .notification,
+        .message,
+        .message-body,
+        .button,
+        .tag,
+        .input,
+        .textarea,
+        .select select,
+        .table {
+            border-radius: 0 !important;
+        }
+
+        .box,
+        .notification,
+        .message,
+        .hero {
+            box-shadow: none !important;
+        }
+
+        .box,
+        .notification,
+        .message,
+        .hero,
+        .table {
+            border: 1px solid hsl(0, 0%, 86%);
+        }
+
+        .dashboard-hero .title {
+            font-size: 1.65rem;
+            letter-spacing: 0.02em;
+        }
+
+        .dashboard-hero .subtitle {
+            font-size: 0.95rem;
+            margin-bottom: 0.2rem;
+        }
+
+        .dashboard-card {
+            padding: 0;
+        }
+
+        .dashboard-card-title {
+            min-height: 3rem;
+            display: flex;
+            align-items: center;
             margin: 0;
-            padding: 20px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: #333;
+            padding: 0.9rem 1rem;
+            border-bottom: 1px solid hsl(0, 0%, 86%);
+            font-size: 0.95rem;
+            letter-spacing: 0.01em;
         }
-        .container {
-            max-width: 1000px;
-            margin: 0 auto;
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-            overflow: hidden;
+
+        .dashboard-message {
+            margin: 1rem;
         }
-        .header {
-            background: <?php echo $overallStatus ? 'linear-gradient(135deg, #27ae60 0%, #2ecc71 100%)' : 'linear-gradient(135deg, #e74c3c 0%, #c0392b 100%)'; ?>;
-            color: white;
-            padding: 30px;
-            text-align: center;
-        }
-        .header h1 {
-            margin: 0;
-            font-size: 2.5em;
-        }
-        .content {
-            padding: 30px;
-        }
-        .test-result {
-            margin-bottom: 20px;
-            padding: 20px;
-            border-radius: 8px;
-            border-left: 4px solid;
-        }
-        .test-success {
-            background: #d5f4e6;
-            border-color: #27ae60;
-        }
-        .test-failure {
-            background: #ffeaa7;
-            border-color: #e74c3c;
-        }
-        .test-name {
-            font-weight: bold;
-            font-size: 1.1em;
-            margin-bottom: 5px;
-        }
-        .test-description {
-            color: #666;
-            margin-bottom: 10px;
-        }
-        .test-message {
-            font-weight: 500;
-        }
-        .status-icon {
-            float: right;
-            font-size: 1.5em;
-        }
-        .back-link {
-            display: inline-block;
-            margin-top: 20px;
-            padding: 10px 20px;
-            background: #3498db;
-            color: white;
-            text-decoration: none;
-            border-radius: 5px;
-        }
-        .back-link:hover {
-            background: #2980b9;
+
+        .test-title-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
         }
     </style>
 </head>
-<body>
-    <div class="container">
-        <div class="header">
-            <h1><?php echo $overallStatus ? '✓' : '⚠'; ?> Security Tests</h1>
-            <p><?php echo $overallStatus ? 'All tests passed' : 'Some tests failed'; ?></p>
-        </div>
-        
-        <div class="content">
-            <?php foreach ($tests as $test): ?>
-                <div class="test-result <?php echo $test['status'] ? 'test-success' : 'test-failure'; ?>">
-                    <div class="status-icon"><?php echo $test['status'] ? '✓' : '✗'; ?></div>
-                    <div class="test-name"><?php echo htmlspecialchars($test['name']); ?></div>
-                    <div class="test-description"><?php echo htmlspecialchars($test['description']); ?></div>
-                    <div class="test-message"><?php echo htmlspecialchars($test['message']); ?></div>
+<body class="has-background-dark">
+    <section class="section">
+        <div class="container is-max-desktop">
+            <section class="hero is-light is-small mb-5 dashboard-hero">
+                <div class="hero-body has-text-centered">
+                    <p class="title">Security Tests</p>
+                    <p class="subtitle"><?php echo $overallStatus ? 'All tests passed' : 'Some tests failed'; ?></p>
                 </div>
-            <?php endforeach; ?>
-            
-            <a href="/" class="back-link">← Back to Environment Info</a>
+            </section>
+
+            <div class="box dashboard-card">
+                <h3 class="title is-5 dashboard-card-title">Security Checks</h3>
+                <?php foreach ($tests as $test): ?>
+                    <article class="message is-light dashboard-message">
+                        <div class="message-body">
+                            <div class="test-title-row">
+                                <strong class="<?php echo $test['status'] ? 'has-text-success-dark' : 'has-text-danger-dark'; ?>"><?php echo htmlspecialchars($test['name']); ?></strong>
+                                <span class="tag <?php echo $test['status'] ? 'is-success' : 'is-danger'; ?> is-light">
+                                    <?php echo $test['status'] ? 'PASS' : 'FAIL'; ?>
+                                </span>
+                            </div>
+                            <p class="has-text-grey mt-2 mb-2"><?php echo htmlspecialchars($test['description']); ?></p>
+                            <p><?php echo htmlspecialchars($test['message']); ?></p>
+                        </div>
+                    </article>
+                <?php endforeach; ?>
+
+                <div class="buttons mt-5 mb-4 ml-4">
+                    <a href="/" class="button is-link is-light">Back to Environment Info</a>
+                </div>
+            </div>
         </div>
-    </div>
+    </section>
 </body>
 </html>

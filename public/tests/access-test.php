@@ -149,130 +149,124 @@ $allPassed = $passedTests === $totalTests;
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ProgenPHP - Access Tests</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@1.0.2/css/bulma.min.css">
     <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            line-height: 1.6;
-            margin: 0;
-            padding: 20px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: #333;
+        .hero,
+        .box,
+        .notification,
+        .message,
+        .message-body,
+        .button,
+        .tag,
+        .input,
+        .textarea,
+        .select select,
+        .table {
+            border-radius: 0 !important;
         }
-        .container {
-            max-width: 1000px;
-            margin: 0 auto;
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-            overflow: hidden;
+
+        .box,
+        .notification,
+        .message,
+        .hero {
+            box-shadow: none !important;
         }
-        .header {
-            background: <?php echo $allPassed ? 'linear-gradient(135deg, #27ae60 0%, #2ecc71 100%)' : 'linear-gradient(135deg, #f39c12 0%, #e67e22 100%)'; ?>;
-            color: white;
-            padding: 30px;
-            text-align: center;
+
+        .box,
+        .notification,
+        .message,
+        .hero,
+        .table {
+            border: 1px solid hsl(0, 0%, 86%);
         }
-        .header h1 {
-            margin: 0;
-            font-size: 2.5em;
+
+        .dashboard-hero .title {
+            font-size: 1.65rem;
+            letter-spacing: 0.02em;
         }
-        .content {
-            padding: 30px;
+
+        .dashboard-hero .subtitle {
+            font-size: 0.95rem;
+            margin-bottom: 0.2rem;
         }
-        .summary {
-            background: #ecf0f1;
-            padding: 20px;
-            border-radius: 8px;
-            margin-bottom: 30px;
-            text-align: center;
+
+        .dashboard-card {
+            padding: 0;
         }
-        .summary h3 {
-            margin-top: 0;
-        }
-        .test-result {
+
+        .dashboard-card-title {
+            min-height: 3rem;
             display: flex;
             align-items: center;
-            padding: 15px;
-            margin-bottom: 10px;
-            border-radius: 5px;
-            background: #f8f9fa;
-            border-left: 4px solid;
+            margin: 0;
+            padding: 0.9rem 1rem;
+            border-bottom: 1px solid hsl(0, 0%, 86%);
+            font-size: 0.95rem;
+            letter-spacing: 0.01em;
         }
-        .test-success {
-            border-color: #27ae60;
-            background: #d5f4e6;
+
+        .dashboard-summary {
+            margin: 1rem;
+            font-size: 0.92rem;
         }
-        .test-failure {
-            border-color: #e74c3c;
-            background: #ffeaa7;
+
+        .dashboard-message {
+            margin: 0 1rem 1rem;
         }
-        .test-icon {
-            margin-right: 15px;
-            font-size: 1.2em;
-            font-weight: bold;
-        }
-        .test-content {
-            flex-grow: 1;
-        }
-        .test-name {
-            font-weight: bold;
-            margin-bottom: 5px;
+
+        .test-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
         }
         .test-message {
-            color: #666;
-            font-size: 0.9em;
-        }
-        .navigation {
-            margin-top: 30px;
-            text-align: center;
-        }
-        .nav-link {
-            display: inline-block;
-            margin: 0 10px;
-            padding: 10px 20px;
-            background: #3498db;
-            color: white;
-            text-decoration: none;
-            border-radius: 5px;
-        }
-        .nav-link:hover {
-            background: #2980b9;
+            margin-top: 0.25rem;
         }
     </style>
 </head>
-<body>
-    <div class="container">
-        <div class="header">
-            <h1>Access Tests</h1>
-            <p>Testing directory access and file permissions</p>
-        </div>
-        
-        <div class="content">
-            <div class="summary">
-                <h3>Test Summary</h3>
-                <p><strong><?php echo $passedTests; ?></strong> out of <strong><?php echo $totalTests; ?></strong> tests passed</p>
-                <?php if ($allPassed): ?>
-                    <p style="color: #27ae60;">✓ All access tests passed successfully!</p>
-                <?php else: ?>
-                    <p style="color: #e74c3c;">⚠ Some tests failed. Check the results below.</p>
-                <?php endif; ?>
-            </div>
-            
-            <?php foreach ($accessTests as $test): ?>
-                <div class="test-result <?php echo $test['status'] ? 'test-success' : 'test-failure'; ?>">
-                    <div class="test-icon"><?php echo $test['status'] ? '✓' : '✗'; ?></div>
-                    <div class="test-content">
-                        <div class="test-name"><?php echo htmlspecialchars($test['test']); ?></div>
-                        <div class="test-message"><?php echo htmlspecialchars($test['message']); ?></div>
-                    </div>
+<body class="has-background-dark">
+    <section class="section">
+        <div class="container is-max-desktop">
+            <section class="hero is-light is-small mb-5 dashboard-hero">
+                <div class="hero-body has-text-centered">
+                    <p class="title">Access Tests</p>
+                    <p class="subtitle">Testing directory access and file permissions</p>
                 </div>
-            <?php endforeach; ?>
-            
-            <div class="navigation">
-                <a href="/" class="nav-link">← Environment Info</a>
-                <a href="/tests/security-test.php" class="nav-link">Security Tests</a>
+            </section>
+
+            <div class="box dashboard-card">
+                <h3 class="title is-5 dashboard-card-title">Test Results</h3>
+                <div class="notification is-light has-text-centered dashboard-summary">
+                    <p class="title is-6 mb-2">Test Summary</p>
+                    <p><strong><?php echo $passedTests; ?></strong> out of <strong><?php echo $totalTests; ?></strong> tests passed</p>
+                    <?php if ($allPassed): ?>
+                        <p class="has-text-success-dark mt-2">All access tests passed successfully.</p>
+                    <?php else: ?>
+                        <p class="has-text-danger-dark mt-2">Some tests failed. Check the results below.</p>
+                    <?php endif; ?>
+                </div>
+
+                <?php foreach ($accessTests as $test): ?>
+                    <article class="message is-light dashboard-message">
+                        <div class="message-body">
+                            <div class="test-row">
+                                <strong class="<?php echo $test['status'] ? 'has-text-success-dark' : 'has-text-danger-dark'; ?>"><?php echo htmlspecialchars($test['test']); ?></strong>
+                                <span class="tag <?php echo $test['status'] ? 'is-success' : 'is-danger'; ?> is-light">
+                                    <?php echo $test['status'] ? 'PASS' : 'FAIL'; ?>
+                                </span>
+                            </div>
+                            <p class="test-message has-text-grey-dark"><?php echo htmlspecialchars($test['message']); ?></p>
+                        </div>
+                    </article>
+                <?php endforeach; ?>
+
+                <div class="buttons is-centered mt-5 mb-4">
+                    <a href="/" class="button is-link is-light">Back to Environment Info</a>
+                    <a href="/tests/security-test.php" class="button is-info is-light">Security Tests</a>
+                </div>
             </div>
         </div>
-    </div>
+    </section>
 </body>
 </html>

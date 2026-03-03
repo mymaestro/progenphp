@@ -24,9 +24,17 @@ if (!in_array($_SERVER['REMOTE_ADDR'], $allowed_ips)) {
 */
 
 // Set page title in the output
-echo "<h1 style='text-align: center; color: #2c3e50; margin-bottom: 30px;'>ProgenPHP - Complete PHP Information</h1>";
-echo "<div style='text-align: center; margin-bottom: 20px;'>";
-echo "<a href='index.php' style='background: #3498db; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;'>← Back to Main Page</a>";
+echo "<link rel='stylesheet' href='https://cdn.jsdelivr.net/npm/bulma@1.0.2/css/bulma.min.css'>";
+echo "<style>.hero,.box,.notification,.message,.message-body,.button,.tag,.input,.textarea,.select select,.table{border-radius:0!important}.box,.notification,.message,.hero{box-shadow:none!important}.box,.notification,.message,.hero,.table{border:1px solid hsl(0,0%,86%)}</style>";
+echo "<div class='has-background-dark'>";
+echo "<section class='section'><div class='container is-max-desktop'>";
+echo "<div class='box'>";
+echo "<h1 class='title has-text-centered'>ProgenPHP - Complete PHP Information</h1>";
+echo "<div class='has-text-centered'>";
+echo "<a href='index.php' class='button is-link is-light'>Back to Main Page</a>";
+echo "</div>";
+echo "</div>";
+echo "</div></section>";
 echo "</div>";
 
 // Display complete phpinfo
